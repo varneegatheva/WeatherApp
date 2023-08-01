@@ -78,7 +78,7 @@ def index(request):
 
             city_weather_update = {}
 
-        context = {'city_weather_update': city_weather_update}
+        context = {'city_weather_update': city_weather_update, 'city_name': city_name}
         return render(request, 'weatherupdates/home.html', context)
     
     # if there is an error the 404 page will be rendered 

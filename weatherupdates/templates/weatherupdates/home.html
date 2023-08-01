@@ -6,11 +6,11 @@
         <div class="mt-4 p-5 bg-success text-white rounded mb-3">
             <h1>Weather Update App</h1>
         </div>
-        <form action="." method="POST">
+        <form id='form1' action="." method="POST">
             <!-- secures the form from any malicious attacks during submission -->
           {% csrf_token %} 
           <div class="input-group">
-            <input type="text" required class="form-control" name="city" placeholder="Search City.......">
+            <input type="text" id="city" required class="form-control" name="city" placeholder="Search City.......">
             <div class="input-group-append">
               <button class="btn btn-success" type="submit">
                 Search
@@ -23,13 +23,42 @@
             <div class="card-body">
                 <img src="http://openweathermap.org/img/w/{{ city_weather_update.icon }}.png" alt="">
                 <div class="card-text float-end">{{ city_weather_update.time }}</div>
-                <div class="card-text"><h5>{{ city_weather_update.city }} {{ city_weather_update.country_code }}</h5></div>
+                <div class="card-text"><h8>{{ city_weather_update.city }} {{ city_weather_update.country_code }}</h5></div>
                 <div class="card-text"><h6>{{ city_weather_update.temperature }}</h6></div>
                 <div class="card-text"><h6>{{ city_weather_update.description | title }}</h6></div>
                 <div class="card-text"><h6>{{ city_weather_update.wind }}</h6></div>
                 <div class="card-text"><h6>{{ city_weather_update.humidity }}</h6></div>
             </div>
         </div>
+        <form id="addCityForm" action="/add_city" method="POST">
+          <input type="hidden" id="hiddenCity" name="hiddenCity" value={{ city_name }}>
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" >Add City</button>
+          <!-- <button type="submit" id="addToFavorites">&#9734;</button> Use the star icon as a button -->
+        </form>
     </div>
 </div>
+
+
+<script>
+
+// let cityValue = "";
+
+// // Function to update the city value
+// function updateHiddenCityValue() {
+//     cityValue = document.getElementById('city').value;
+//     document.getElementById('hiddenCity').value = cityValue
+//     console.log(document.getElementById('hiddenCity').value)
+// }
+
+// // Attach the function to form1 submission
+// document.getElementById('form1').addEventListener('submit', (e)=> {
+//     // event.preventDefault();
+//     // Update the hidden input field in form2 with the data from form1
+//     updateHiddenCityValue();
+// });
+
+</script>
+
 {% endblock %}
