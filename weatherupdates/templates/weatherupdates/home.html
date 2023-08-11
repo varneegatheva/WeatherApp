@@ -6,29 +6,30 @@
         <div class="mt-4 p-5 bg-success text-white rounded mb-3">
             <h1>Weather Update App</h1>
         </div>
-        <form id='form1' action="." method="POST">
             <!-- secures the form from any malicious attacks during submission -->
           {% csrf_token %} 
           <div class="input-group">
             <input type="text" id="city" required class="form-control" name="city" placeholder="Search City.......">
             <div class="input-group-append">
-              <button class="btn btn-success" type="submit">
+              <button onclick=callAPI()>
                 Search
               </button>
             </div>
           </div>
-        </form>
         <hr>
         <div class="card">
             <div class="card-body">
-                <img src="http://openweathermap.org/img/w/{{ city_weather_update.icon }}.png" alt="">
-                <div class="card-text float-end">{{ city_weather_update.time }}</div>
-                <div class="card-text"><h8>{{ city_weather_update.city }} {{ city_weather_update.country_code }}</h5></div>
-                <div class="card-text"><h6>{{ city_weather_update.temperature }}</h6></div>
-                <div class="card-text"><h6>{{ city_weather_update.description | title }}</h6></div>
-                <div class="card-text"><h6>{{ city_weather_update.wind }}</h6></div>
-                <div class="card-text"><h6>{{ city_weather_update.humidity }}</h6></div>
+                <div id="city-time" class="card-text float-end"></div>
+                <img id="city-icon" src="http://openweathermap.org/img/w/{{ icon }}.png" alt="">
+                <div id='city-description' class="card-text"><h6></h6></div>
+                <div id='city-name' class="card-text"><h8></h5></div>
+                <div id='city-countrycode' class="card-text"><h8></h5></div>
+                <div id="city-temp" class="card-text"><h6></h6></div>
+                <div id='city-wind' class="card-text"><h6></h6></div>
+                <div id='city-humidity' class="card-text"><h6></h6></div>
             </div>
+        </div>
+        <div id="errorTemplate" style="display: none;">
         </div>
         <form id="addCityForm" action="/add_city" method="POST">
           <input type="hidden" id="hiddenCity" name="hiddenCity" value={{ city_name }}>
@@ -43,22 +44,84 @@
 
 <script>
 
-// let cityValue = "";
+var city_response = {}
 
-// // Function to update the city value
-// function updateHiddenCityValue() {
-//     cityValue = document.getElementById('city').value;
-//     document.getElementById('hiddenCity').value = cityValue
-//     console.log(document.getElementById('hiddenCity').value)
-// }
+  // Function that calls OpenWeatherAPI
+async function callAPI() {
+  city = document.getElementById('city').value;
+  const API_KEY = "4ec39eeea853eba976a2f2022ad32ebd";
+  let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
 
-// // Attach the function to form1 submission
-// document.getElementById('form1').addEventListener('submit', (e)=> {
-//     // event.preventDefault();
-//     // Update the hidden input field in form2 with the data from form1
-//     updateHiddenCityValue();
-// });
+  var errorTemplateDiv = document.getElementById('errorTemplate');
+  try {
+    await getJSON(url);
+    updatePage();
+    errorTemplate.style.display = 'none';
+
+  } 
+  catch (error) {
+    errorTemplateDiv.textContent = 'An error occurred. Sorry, the page you are looking for does not exist.';
+    errorTemplate.style.display = 'block';
+  }
+}
+
+function getJSON(url) {
+  // sets response variable to the fetched JSON data
+  // sends a GET request to the URL, fetch returns a Promise ,
+  return fetch(url).then(response => response.json()).then(data => {city_response=data});
+}
+
+function updatePage() {
+  var temp = city_response.main.temp;
+  var tempDiv = document.getElementById('city-temp');
+  tempDiv.textContent = `Temperature: ${temp} °C`;
+
+
+  var current_time = new Date();
+  // Formatting the time using the format: Day, Month Date Year, Current Time
+  var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
+  var formatted_time = current_time.toLocaleDateString('en-US', options);
+  var timeDiv = document.getElementById('city-time');
+  timeDiv.textContent = `${formatted_time}`;
+
+
+  var city = city_response.name;
+  cityDiv = document.getElementById('city-name');
+  cityDiv.textContent = `${city}`;
+
+  var country = city_response.sys.country;
+  countryDiv = document.getElementById('city-countrycode');
+  countryDiv.textContent = `${country}`;
+
+  var description = city_response.weather[0].description;
+  var descriptionDiv = document.getElementById('city-description');
+  descriptionDiv.textContent =  `${description}`;
+
+
+  var wind = city_response.wind.speed;
+  var windDiv = document.getElementById('city-wind');
+  windDiv.textContent = `Wind: ${wind} km/h`;
+
+  var humidity = city_response.main.humidity;
+  var humidityDiv = document.getElementById('city-humidity');
+  humidityDiv.textContent = `Humidity: ${humidity} %`;
+
+  var icon = city_response.weather[0].icon;
+  var iconDiv = document.getElementById('city-icon');
+
+  var iconUrl = `http://openweathermap.org/img/w/${icon}.png`;
+  fetch(iconUrl).then(response => response.blob()).then(imageBlob => {
+      const objectURL = URL.createObjectURL(imageBlob);  // Create a URL for the Blob
+      iconDiv.src = objectURL;  // Set the src attribute of the <img> element
+    })
+}
 
 </script>
 
 {% endblock %}
+
+
+
+
+
+

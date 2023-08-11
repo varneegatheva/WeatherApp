@@ -25,7 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # this points Django to weatherupdates/urls.py
-    path('weatherupdates/', include(('weatherupdates.urls'), namespace='weather')), #namespace is used to group related URL patterns together
+    path('weatherupdates/', include('weatherupdates.urls')), #namespace is used to group related URL patterns together
     path('', include(('accounts.urls'), namespace='accounts')),
 
 ]
