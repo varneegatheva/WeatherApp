@@ -2,7 +2,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import  render, redirect
 
 from accounts.models import FavouriteCity
-from .forms import AddCityForm, NewUserForm
+from .forms import NewUserForm
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
@@ -14,7 +14,7 @@ def register_request(request):
 			user = form.save()
 			login(request, user)
 			messages.success(request, "Registration successful." )
-			return redirect("weather:home")
+			return redirect("weatherupdates:home")
 		messages.error(request, "Unsuccessful registration. Invalid information.")
 	form = NewUserForm()
 	return render (request=request, template_name="accounts/register.html", context={"register_form":form})
@@ -29,7 +29,6 @@ def login_request(request):
 			if user is not None:
 				login(request, user)
 				messages.info(request, f"You are now logged in as {username}.")
-				print('REDIRECT IS GOING TO ')
 				return redirect("weatherupdates:home")
 			else:
 				messages.error(request,"Invalid username or password.")
@@ -39,36 +38,36 @@ def login_request(request):
 	return render(request=request, template_name="accounts/login.html", context={"login_form":form})
 
 def add_city_to_favourites(request):
-    city = request.POST['hiddenCity']
-    # print('TYPE', type(city))
-    # form2 = AddCityForm(request.POST)
-    # print("request.post", request.POST)
-    # print("BOOLEAN", form2.is_valid)
-    # print("form2", form2)
-    # print("clean_data", form2.cleaned_data)
-    # city_name2 = form2.cleaned_data['city_name']
-    # print("CITYNAME: ", city_name2)
-    # if request.method == 'POST':
-    #     form = AddCityForm(request.POST)
-    #     if form.is_valid():
-    #         city_name = form.cleaned_data['city_name']
-    #         user = request.user  # Get the currently logged-in user
-    #         favorite_city = FavouriteCity(user=user, city_name=city_name)
-    #         favorite_city.save()
-    #         if request.is_ajax():
-    #             return JsonResponse({'status': 'success'}) # Return JSON response for AJAX request
-    #         else:
-    #             return redirect('favorites_list')  # Redirect to the list of favorite cities
+    user = request.user
+    favourite_city_name = request.POST['hiddenCity']
+    favourite_city = FavouriteCity(user=user, city_name=favourite_city_name)
+    favourite_city.save()
+    # message = f"You submitted the city: {favourite_city_name}"
+    return render(request=request, template_name="weatherupdates/home.html") 
 
-    # else:
-    #     form = AddCityForm()
-	
-	
-	# return render(request, 'accounts/hi.html')
-    return render(request, 'accounts/hi.html')
+def get_favourites(request):
+	queryset = FavouriteCity.objects.all()
+	cities = [city.city_name for city in queryset]
+	context = {'cities': cities}
+	html_template = get_html_template(cities)
+	return render(request=request, template_name="accounts/favourites.html", context=context)
 
-    # return render(request, 'add_city.html', {'form': form})
-	# print("REQUEST': ", request)
-	# print(request.POST)
+def get_html_template(cities):
+	template = """   
+	<div class="card">
+		<div class="card-body">
+			<div id="city-time" class="card-text float-end"></div>
+			<img id="city-icon" src="http://openweathermap.org/img/w/{{ icon }}.png" alt="">
+			<div id='city-description' class="card-text"><h6></h6></div>
+			<div id='city-name' class="card-text"><h8></h5></div>
+			<div id='city-countrycode' class="card-text"><h8></h5></div>
+			<div id="city-temp" class="card-text"><h6></h6></div>
+			<div id='city-wind' class="card-text"><h6></h6></div>
+			<div id='city-humidity' class="card-text"><h6></h6></div>
+		</div>
+	</div>
+	"""
+	for city in cities:
+		pass
 
-
+	return template

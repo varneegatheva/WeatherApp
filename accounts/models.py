@@ -8,4 +8,4 @@ from django.contrib.auth.models import User
 
 class FavouriteCity(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # city_name = models.CharField(max_length=100)
+    city_name = models.CharField(max_length=100, null=True, unique=True)

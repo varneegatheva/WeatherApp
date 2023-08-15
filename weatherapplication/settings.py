@@ -58,7 +58,7 @@ ROOT_URLCONF = 'weatherapplication.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True, # checks inside an app's templates folder
         'OPTIONS': {
             'context_processors': [

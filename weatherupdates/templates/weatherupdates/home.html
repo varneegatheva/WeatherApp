@@ -1,6 +1,7 @@
-{% extends 'weatherupdates/base.html' %}
+{% extends 'header.html' %}
 
 {% block content %}
+
 <div class="row justify-content-center my-5">
     <div class="col-md-5">
         <div class="mt-4 p-5 bg-success text-white rounded mb-3">
@@ -31,19 +32,21 @@
         </div>
         <div id="errorTemplate" style="display: none;">
         </div>
-        <form id="addCityForm" action="/add_city" method="POST">
+        <form id="addCityForm" action="/add_city/" method="POST">
           <input type="hidden" id="hiddenCity" name="hiddenCity" value={{ city_name }}>
           {% csrf_token %}
           {{ form.as_p }}
           <button type="submit" >Add City</button>
           <!-- <button type="submit" id="addToFavorites">&#9734;</button> Use the star icon as a button -->
         </form>
+        <form id="favourites">
+
+        </form>
     </div>
 </div>
 
 
 <script>
-
 var city_response = {}
 
   // Function that calls OpenWeatherAPI
@@ -57,7 +60,6 @@ async function callAPI() {
     await getJSON(url);
     updatePage();
     errorTemplate.style.display = 'none';
-
   } 
   catch (error) {
     errorTemplateDiv.textContent = 'An error occurred. Sorry, the page you are looking for does not exist.';
@@ -88,6 +90,10 @@ function updatePage() {
   var city = city_response.name;
   cityDiv = document.getElementById('city-name');
   cityDiv.textContent = `${city}`;
+
+  // update hiddenCity
+  hiddenCityDiv = document.getElementById('hiddenCity');
+  hiddenCityDiv.value = city
 
   var country = city_response.sys.country;
   countryDiv = document.getElementById('city-countrycode');

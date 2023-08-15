@@ -1,0 +1,62 @@
+{% extends "header.html" %}
+
+{% block content %}  
+
+
+<div class="row justify-content-center my-5">
+    <div class="col-md-5">
+        <div class="mt-4 p-5 bg-success text-white rounded mb-3">
+            <h1>Favourite Cities</h1>
+        </div>
+    </div>
+</div>
+<ul id="weather-list"></ul>
+
+
+
+
+<script>
+
+
+const weatherList = document.getElementById('weather-list');
+
+async function fetchWeather(cityName) {
+    console.log("CITYNAME: ", cityName)
+    const API_KEY = "4ec39eeea853eba976a2f2022ad32ebd";
+    let url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${API_KEY}&units=metric`;
+    const response = await fetch(url);
+    console.log(response);
+    const data = await response.json();
+    console.log(data);
+    const temperature = data.main.temp;
+    const humidity = data.main.humidity;
+    const listItem = document.createElement('li');
+    listItem.textContent = `${cityName}: Temperature: ${temperature} K, Humidity: ${humidity}%`;
+    weatherList.appendChild(listItem);
+    
+    console.log("I AM HERE");
+    
+    // weatherList.appendChild(cityName);
+}
+
+const list_cities = [
+    {% for city in cities %}
+        '{{ city }}',
+    {% endfor %}
+];
+
+async function fetchWeatherForCities(list_cities) {
+    console.log(list_cities)
+    for (const city in list_cities) {
+        console.log([city]);
+        await fetchWeather(city);
+    }
+}
+
+
+fetchWeatherForCities(list_cities);
+
+
+</script>
+
+{% endblock %}

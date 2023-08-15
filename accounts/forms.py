@@ -20,5 +20,5 @@ class NewUserForm(UserCreationForm):
 		return user
 	
 
-class AddCityForm(forms.Form):
-    city_name = forms.CharField(max_length=100, label='City Name')
+# class AddCityForm(forms.Form):
+#     city_name = forms.CharField(max_length=100, label='City Name')
