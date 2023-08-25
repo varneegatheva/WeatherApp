@@ -6,6 +6,9 @@ from .forms import NewUserForm
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
+from django.views.decorators.cache import never_cache
+from django.views.decorators.cache import cache_control
+
 
 def register_request(request):
 	if request.method == "POST":
@@ -19,6 +22,8 @@ def register_request(request):
 	form = NewUserForm()
 	return render (request=request, template_name="accounts/register.html", context={"register_form":form})
 
+# @never_cache
+# @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def login_request(request):
 	if request.method == "POST":
 		form = AuthenticationForm(request, data=request.POST)
@@ -52,22 +57,66 @@ def get_favourites(request):
 	html_template = get_html_template(cities)
 	return render(request=request, template_name="accounts/favourites.html", context=context)
 
+
 def get_html_template(cities):
-	template = """   
+
+	template = """
 	<div class="card">
 		<div class="card-body">
 			<div id="city-time" class="card-text float-end"></div>
 			<img id="city-icon" src="http://openweathermap.org/img/w/{{ icon }}.png" alt="">
-			<div id='city-description' class="card-text"><h6></h6></div>
-			<div id='city-name' class="card-text"><h8></h5></div>
-			<div id='city-countrycode' class="card-text"><h8></h5></div>
+			<div id="city-description" class="card-text"><h6></h6></div>
+			<div id="city-name" class="card-text"><h8></h5></div>
+			<div id="city-countrycode" class="card-text"><h8></h5></div>
 			<div id="city-temp" class="card-text"><h6></h6></div>
-			<div id='city-wind' class="card-text"><h6></h6></div>
-			<div id='city-humidity' class="card-text"><h6></h6></div>
+			<div id="city-wind" class="card-text"><h6></h6></div>
+			<div id="city-humidity" class="card-text"><h6></h6></div>
 		</div>
 	</div>
 	"""
-	for city in cities:
-		pass
 
-	return template
+	print(template)
+	# for city in cities:
+	# 	full_template = full_template + template
+	# print(full_template)
+	# return full_template
+	pass
+
+
+
+
+
+# def get_html_template(cities):
+# 	full_template = """   
+# 	<div class="card">
+# 		<div class="card-body">
+# 			<div id="city-time" class="card-text float-end"></div>
+# 			<img id="city-icon" src="http://openweathermap.org/img/w/{{ icon }}.png" alt="">
+# 			<div id='city-description' class="card-text"><h6></h6></div>
+# 			<div id='city-name' class="card-text"><h8></h5></div>
+# 			<div id='city-countrycode' class="card-text"><h8></h5></div>
+# 			<div id="city-temp" class="card-text"><h6></h6></div>
+# 			<div id='city-wind' class="card-text"><h6></h6></div>
+# 			<div id='city-humidity' class="card-text"><h6></h6></div>
+# 		</div>
+# 	</div>
+# 	"""
+
+# 	template = """   
+# 	<div class="card">
+# 		<div class="card-body">
+# 			<div id="city-time" class="card-text float-end"></div>
+# 			<img id="city-icon" src="http://openweathermap.org/img/w/{{ icon }}.png" alt="">
+# 			<div id='city-description' class="card-text"><h6></h6></div>
+# 			<div id='city-name' class="card-text"><h8></h5></div>
+# 			<div id='city-countrycode' class="card-text"><h8></h5></div>
+# 			<div id="city-temp" class="card-text"><h6></h6></div>
+# 			<div id='city-wind' class="card-text"><h6></h6></div>
+# 			<div id='city-humidity' class="card-text"><h6></h6></div>
+# 		</div>
+# 	</div>
+# 	"""
+# 	for city in cities:
+# 		full_template = full_template + template
+# 	print(full_template)
+# 	return full_template
